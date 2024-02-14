@@ -39,6 +39,19 @@ namespace ControlOfPrinterApi.Controllers
             return Ok(model);
         }
 
+        [HttpPost("scan")]
+        public async Task<ActionResult<List<PrinterModel>>> ScanPrinters()
+        {
+            // Chama o método no repositório para escanear as impressoras
+            await _printerRepository.ScanPrinter();
+
+            // Retorna a lista atualizada de impressoras após o escaneamento
+            List<PrinterModel> printers = await _printerRepository.GetPrinters();
+            return Ok(printers);
+        }
+
+
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<PrinterModel>> Delete(int id)
         {

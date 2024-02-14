@@ -8,6 +8,7 @@ namespace ControlOfPrinterApi.Repositories.Interfaces
         Task<PrinterModel> GetPrinter(int id);
         Task<PrinterModel> AddPrinter(PrinterModel printer);
         Task<PrinterModel> UpdatePrinter(PrinterModel printer, int id);
+        Task<PrinterModel> ScanPrinter();
         Task<bool> Delete(int id);
 
     }

@@ -1,7 +1,10 @@
 ﻿using ControlOfPrinterApi.Data;
 using ControlOfPrinterApi.Models;
 using ControlOfPrinterApi.Repositories.Interfaces;
+using HtmlAgilityPack;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace ControlOfPrinterApi.Repositories
 {
@@ -58,6 +61,36 @@ namespace ControlOfPrinterApi.Repositories
             await _context.SaveChangesAsync();
 
             return model;
+        }
+
+        public async Task<PrinterModel> ScanPrinter()
+        {
+            var printers = await _context.Printers.ToListAsync();
+
+            foreach (PrinterModel model in printers)
+            {
+                try
+                {
+                    string url = $"http://{model.Ip}/main.asp?Lang=en-us";
+                    HtmlWeb web = new HtmlWeb();
+                    HtmlDocument doc = web.Load(url);
+
+                    var level = doc.DocumentNode.SelectNodes("//*[@class='settingCategoryL11'][5]")?
+                                                .FirstOrDefault()?.InnerText;
+
+                    if (level != null)
+                    {
+                        model.Level = level;
+                    }
+                }
+                catch
+                {
+                    model.Level = "Não foi possivel conectar";
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return null;
         }
 
     }
